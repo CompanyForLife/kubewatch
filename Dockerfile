@@ -1,21 +1,13 @@
-FROM golang AS builder
-MAINTAINER "Cuong Manh Le <cuong.manhle.vn@gmail.com>"
+FROM alpine:latest
 
-RUN apt-get update && \
-    dpkg --add-architecture arm64 &&\
-    apt-get install -y --no-install-recommends build-essential && \
-    apt-get clean && \
-    mkdir -p "$GOPATH/src/github.com/bitnami-labs/kubewatch"
+# Set working directory
+WORKDIR /app
 
-ADD . "$GOPATH/src/github.com/bitnami-labs/kubewatch"
+# Copy the executable into the container
+COPY kubewatch /app/kubewatch
 
-RUN cd "$GOPATH/src/github.com/bitnami-labs/kubewatch" && \
-    CGO_ENABLED=0 GOOS=linux GOARCH=$(dpkg --print-architecture) go build -a --installsuffix cgo --ldflags="-s" -o /kubewatch
+# Give execution permissions if needed
+RUN chmod +x /app/kubewatch
 
-FROM cgr.dev/chainguard/bash:latest
-
-COPY --from=builder /kubewatch /bin/kubewatch
-
-ENV KW_CONFIG=/opt/bitnami/kubewatch
-
-ENTRYPOINT ["/bin/kubewatch"]
+# Command to run the application
+CMD ["/app/kubewatch"]

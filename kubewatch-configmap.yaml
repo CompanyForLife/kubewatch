@@ -6,11 +6,10 @@ data:
   .kubewatch.yaml: |
     namespace: ""
     handler:
-      slack:
-        token: <token>
-        channel: <channel>
+      discord:
+        webhookurl: "<webhookurl>"
     resource:
-      deployment: false
+      deployment: true
       replicationcontroller: false
       replicaset: false
       daemonset: false
@@ -21,4 +20,4 @@ data:
       configmap: false
       hpa: false
       coreevent: false
-      event: true
+      event: false

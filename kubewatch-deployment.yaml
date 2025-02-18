@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubewatch
+  labels:
+    app: kubewatch
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubewatch
+  template:
+    metadata:
+      labels:
+        app: kubewatch
+    spec:
+      serviceAccountName: kubewatch
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: kubewatch
+          image: coholife/kubewatch:latest
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: config-volume
+              mountPath: /app/.kubewatch.yaml
+              subPath: .kubewatch.yaml
+          env:
+            - name: KW_CONFIG
+              value: /app/
+      volumes:
+        - name: config-volume
+          configMap:
+            name: kubewatch
