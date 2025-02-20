@@ -20,4 +20,4 @@ data:
       configmap: false
       hpa: false
       coreevent: false
-      event: false
+      event: true
